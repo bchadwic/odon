@@ -3,7 +3,6 @@
 #include <string.h>
 #include <assert.h>
 
-
 int main(void)
 {
   uint8_t conn_data[MAX_EXCH_DATA_LENGTH] = {192, 168, 12, 2};

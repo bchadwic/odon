@@ -2,7 +2,7 @@
 #define FMT_H
 
 #include <inttypes.h>
-#include "exch.h"
+#include "./exch.h"
 
 #define MAX_EXCH_ENCODED_LENGTH 9
 #define MAX_EXCH_PLAINTEXT_LENGTH 22

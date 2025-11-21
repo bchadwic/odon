@@ -1,45 +1,33 @@
 CC      := gcc
 CFLAGS  := -std=c99 -Wall -Wextra -Wpedantic \
-		   -Wshadow -Wpointer-arith -Wcast-qual \
-		   -Wstrict-prototypes -Wmissing-prototypes \
-		   -Wconversion -Wuninitialized -Wunreachable-code \
-		   -Wfloat-equal -Wwrite-strings -Wswitch-enum \
-		   -Wredundant-decls -Wformat=2 -Wno-discarded-qualifiers
+           -Wshadow -Wpointer-arith -Wcast-qual \
+           -Wstrict-prototypes -Wmissing-prototypes \
+           -Wconversion -Wuninitialized -Wunreachable-code \
+           -Wfloat-equal
+CPPFLAGS := -Iinclude
 
-# Collect all source files recursively
-SRC     := $(shell find src -name '*.c')
-OBJ     := $(SRC:.c=.o)
+SRC_DIR := src
+OBJ_DIR := build
 
-# Collect all include directories recursively
-INC     := $(shell find include -type d)
-CFLAGS  += $(patsubst %,-I%,$(INC))
+SRCS := $(wildcard $(SRC_DIR)/*.c)
+OBJS := $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
-TARGET  := odon
-LIB     := libodon.a
+BIN := odon
 
-.PHONY: all clean unit integration
+$(BIN): $(OBJS)
+	$(CC) $(OBJS) -o $@
 
-all: $(TARGET)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-# Build static library from core sources
-$(LIB): $(OBJ)
-	ar rcs $@ $^
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
 
-# Build main executable using the library
-$(TARGET): $(LIB) main.o
-	$(CC) $(CFLAGS) -o $@ main.o $(LIB)
+TEST_SRCS := $(wildcard test/unit/*.c)
+SRC_SRCS  := $(wildcard src/*.c)
+SRC_IMPL  := $(filter-out src/main.c, $(SRC_SRCS))
 
-# Generic object rule (works with subfolders)
-%.o: %.c
-	$(CC) $(CFLAGS) -c -o $@ $<
-
-clean:
-	rm -f $(OBJ) main.o $(TARGET) $(LIB) $(TEST_BIN)
-
-# ---------- Unit testing ----------
-
-TEST_SRC := $(shell find test/unit -name '*.c')
-TEST_BIN := $(TEST_SRC:.c=)
+TEST_BIN := $(TEST_SRCS:test/unit/%.c=test/unit/%)
 
 unit: $(TEST_BIN)
 	@for t in $(TEST_BIN); do \
@@ -47,11 +35,10 @@ unit: $(TEST_BIN)
 		./$$t || exit 1; \
 	done
 
-# Build test executables linking against the core library
-test/unit/%: test/unit/%.c $(LIB)
-	$(CC) $(CFLAGS) -o $@ $< $(LIB)
-
-# ---------- Integration tests (Go) ----------
-
-integration: all
+integration: $(BIN)
 	cd test/integration && go test -v .
+
+clean:
+	rm -rf $(OBJ_DIR) $(BIN) $(TEST_BIN)
+
+.PHONY: unit integration clean

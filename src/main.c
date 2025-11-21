@@ -1,6 +1,6 @@
-#include "./include/odon.h"
-#include "./include/exch.h"
-#include "./include/fmt.h"
+#include "../include/odon.h"
+#include "../include/exch.h"
+#include "../include/fmt.h"
 
 static int run(int argc, char *argv[]);
 static int send_cmd(struct sockaddr_in *src, socklen_t src_len, struct sockaddr_in *dst, socklen_t dst_len, char *filename);

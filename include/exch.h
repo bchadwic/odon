@@ -1,5 +1,5 @@
-#ifndef CONN_H
-#define CONN_H
+#ifndef EXCH_H
+#define EXCH_H
 
 #define _GNU_SOURCE
 

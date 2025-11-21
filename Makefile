@@ -1,13 +1,19 @@
 CC      := gcc
 CFLAGS  := -std=c99 -Wall -Wextra -Wpedantic \
-           -Wshadow -Wpointer-arith -Wcast-qual \
-           -Wstrict-prototypes -Wmissing-prototypes \
-           -Wconversion -Wuninitialized -Wunreachable-code \
-           -Wfloat-equal -Wwrite-strings -Wswitch-enum \
-           -Wredundant-decls -Wformat=2 -Wno-discarded-qualifiers
+		   -Wshadow -Wpointer-arith -Wcast-qual \
+		   -Wstrict-prototypes -Wmissing-prototypes \
+		   -Wconversion -Wuninitialized -Wunreachable-code \
+		   -Wfloat-equal -Wwrite-strings -Wswitch-enum \
+		   -Wredundant-decls -Wformat=2 -Wno-discarded-qualifiers
 
-SRC     := $(wildcard src/*.c)
+# Collect all source files recursively
+SRC     := $(shell find src -name '*.c')
 OBJ     := $(SRC:.c=.o)
+
+# Collect all include directories recursively
+INC     := $(shell find include -type d)
+CFLAGS  += $(patsubst %,-I%,$(INC))
+
 TARGET  := odon
 LIB     := libodon.a
 
@@ -23,16 +29,16 @@ $(LIB): $(OBJ)
 $(TARGET): $(LIB) main.o
 	$(CC) $(CFLAGS) -o $@ main.o $(LIB)
 
-# Generic object rule
+# Generic object rule (works with subfolders)
 %.o: %.c
-	$(CC) $(CFLAGS) -Iinclude -c -o $@ $<
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
 	rm -f $(OBJ) main.o $(TARGET) $(LIB) $(TEST_BIN)
 
 # ---------- Unit testing ----------
 
-TEST_SRC := $(wildcard test/unit/*.c)
+TEST_SRC := $(shell find test/unit -name '*.c')
 TEST_BIN := $(TEST_SRC:.c=)
 
 unit: $(TEST_BIN)
@@ -43,7 +49,7 @@ unit: $(TEST_BIN)
 
 # Build test executables linking against the core library
 test/unit/%: test/unit/%.c $(LIB)
-	$(CC) $(CFLAGS) -Iinclude -o $@ $< $(LIB)
+	$(CC) $(CFLAGS) -o $@ $< $(LIB)
 
 # ---------- Integration tests (Go) ----------
 

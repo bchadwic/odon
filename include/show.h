@@ -1,4 +1,7 @@
-#ifndef SHOW_H
-#define SHOW_H
+#pragma once
 
-#endif
+#include "odon.h"
+#include "exch.h"
+#include "fmt.h"
+
+int show_cmd(void);

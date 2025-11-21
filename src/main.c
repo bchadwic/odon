@@ -1,11 +1,8 @@
-#include "../include/odon.h"
-#include "../include/exch.h"
-#include "../include/fmt.h"
+#include "../include/send.h"
+#include "../include/recv.h"
+#include "../include/show.h"
 
 static int run(int argc, char *argv[]);
-static int send_cmd(struct sockaddr_in *src, socklen_t src_len, struct sockaddr_in *dst, socklen_t dst_len, char *filename);
-static int recv_cmd(struct sockaddr_in *src, socklen_t src_len, struct sockaddr_in *dst, socklen_t dst_len, char *filename);
-static int show_cmd(void);
 
 int main(int argc, char *argv[])
 {
@@ -62,80 +59,5 @@ int run(int argc, char *argv[])
     {
         return show_cmd();
     }
-    return 0;
-}
-
-int send_cmd(struct sockaddr_in *src, socklen_t src_len, struct sockaddr_in *dst, socklen_t dst_len, char *filename)
-{
-    FILE *input = fopen(filename, "rb");
-    if (input == NULL)
-    {
-        return -1;
-    }
-
-    printf("sending...\n");
-    struct odon_conn conn = {0};
-    if (odon_init(&conn, src, src_len, dst, dst_len) < 0)
-    {
-        fclose(input);
-        odon_free(&conn);
-        return -1;
-    }
-
-    if (odon_send(&conn, input) < 0)
-    {
-        fclose(input);
-        odon_free(&conn);
-        return -1;
-    }
-
-    fclose(input);
-    odon_free(&conn);
-    return 0;
-}
-
-int recv_cmd(struct sockaddr_in *src, socklen_t src_len, struct sockaddr_in *dst, socklen_t dst_len, char *filename)
-{
-    FILE *output = fopen(filename, "wb");
-    if (output == NULL)
-    {
-        return -1;
-    }
-
-    printf("receiving...\n");
-    struct odon_conn conn = {0};
-    if (odon_init(&conn, src, src_len, dst, dst_len) < 0)
-    {
-        fclose(output);
-        odon_free(&conn);
-        return -1;
-    }
-
-    if (odon_recv(&conn, output) < 0)
-    {
-        fclose(output);
-        odon_free(&conn);
-        return -1;
-    }
-
-    fclose(output);
-    odon_free(&conn);
-    return 0;
-}
-
-int show_cmd(void)
-{
-    struct odon_addr_exch *exch = odon_exchaddrs_init();
-    for (struct odon_addr_exch *curr = exch; curr != NULL; curr = curr->next)
-    {
-        char encoded[MAX_EXCH_ENCODED_LENGTH];
-        fmt_conn_base64url(curr->type, curr->conn_data, encoded);
-
-        char plaintext[MAX_EXCH_PLAINTEXT_LENGTH];
-        fmt_conn_plaintext(curr->type, curr->conn_data, plaintext);
-
-        printf("%s - %s\n", encoded, plaintext);
-    }
-    odon_exchaddrs_free(exch);
     return 0;
 }

@@ -1,5 +1,4 @@
-#ifndef EXCH_H
-#define EXCH_H
+#pragma once
 
 #define _GNU_SOURCE
 
@@ -30,5 +29,3 @@ struct odon_addr_exch
 extern struct odon_addr_exch *odon_exchaddrs_init(void);
 // should be called after using odon_addr_exch
 extern void odon_exchaddrs_free(struct odon_addr_exch *exch);
-
-#endif

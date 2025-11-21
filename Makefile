@@ -41,4 +41,10 @@ integration: $(BIN)
 clean:
 	rm -rf $(OBJ_DIR) $(BIN) $(TEST_BIN)
 
-.PHONY: unit integration clean
+install: $(BIN)
+	@echo "Installing $(BIN) to /usr/local/bin"
+	# Use sudo if necessary
+	sudo cp $(BIN) /usr/local/bin/
+	sudo chmod +x /usr/local/bin/$(BIN)
+
+.PHONY: unit integration clean install

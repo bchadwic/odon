@@ -3,37 +3,31 @@ CFLAGS  := -std=c99 -Wall -Wextra -Wpedantic \
            -Wshadow -Wpointer-arith -Wcast-qual \
            -Wstrict-prototypes -Wmissing-prototypes \
            -Wconversion -Wuninitialized -Wunreachable-code \
-           -Wfloat-equal -Wwrite-strings -Wswitch-enum \
-           -Wredundant-decls -Wformat=2 -Wno-discarded-qualifiers
+           -Wfloat-equal
+CPPFLAGS := -Iinclude
 
-SRC     := $(wildcard src/*.c)
-OBJ     := $(SRC:.c=.o)
-TARGET  := odon
-LIB     := libodon.a
+SRC_DIR := src
+OBJ_DIR := build
 
-.PHONY: all clean unit integration
+SRCS := $(wildcard $(SRC_DIR)/*.c)
+OBJS := $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
-all: $(TARGET)
+BIN := odon
 
-# Build static library from core sources
-$(LIB): $(OBJ)
-	ar rcs $@ $^
+$(BIN): $(OBJS)
+	$(CC) $(OBJS) -o $@
 
-# Build main executable using the library
-$(TARGET): $(LIB) main.o
-	$(CC) $(CFLAGS) -o $@ main.o $(LIB)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-# Generic object rule
-%.o: %.c
-	$(CC) $(CFLAGS) -Iinclude -c -o $@ $<
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
 
-clean:
-	rm -f $(OBJ) main.o $(TARGET) $(LIB) $(TEST_BIN)
+TEST_SRCS := $(wildcard test/unit/*.c)
+SRC_SRCS  := $(wildcard src/*.c)
+SRC_IMPL  := $(filter-out src/main.c, $(SRC_SRCS))
 
-# ---------- Unit testing ----------
-
-TEST_SRC := $(wildcard test/unit/*.c)
-TEST_BIN := $(TEST_SRC:.c=)
+TEST_BIN := $(TEST_SRCS:test/unit/%.c=test/unit/%)
 
 unit: $(TEST_BIN)
 	@for t in $(TEST_BIN); do \
@@ -41,11 +35,16 @@ unit: $(TEST_BIN)
 		./$$t || exit 1; \
 	done
 
-# Build test executables linking against the core library
-test/unit/%: test/unit/%.c $(LIB)
-	$(CC) $(CFLAGS) -Iinclude -o $@ $< $(LIB)
-
-# ---------- Integration tests (Go) ----------
-
-integration: all
+integration: $(BIN)
 	cd test/integration && go test -v .
+
+clean:
+	rm -rf $(OBJ_DIR) $(BIN) $(TEST_BIN)
+
+install: $(BIN)
+	@echo "Installing $(BIN) to /usr/local/bin"
+	# Use sudo if necessary
+	sudo cp $(BIN) /usr/local/bin/
+	sudo chmod +x /usr/local/bin/$(BIN)
+
+.PHONY: unit integration clean install

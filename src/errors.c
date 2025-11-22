@@ -14,7 +14,7 @@ int odon_perror(const char *bin, int err)
   case ERR_INVALID_CMD:
     return fprintf(stderr, "%s: invalid command\n", bin);
   case ERR_NO_POS_ARG:
-    return fprintf(stderr, "%s: missing positional argument\n", bin);
+    return fprintf(stderr, "%s: missing argument\n", bin);
   default:
     return fprintf(stderr, "%s: unknown error code: %d\n", bin, err);
   }

@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
+#include "../include/errors.h"
 
 #define PACKET_SIZE 1200
 

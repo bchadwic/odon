@@ -4,4 +4,4 @@
 #include "exch.h"
 #include "fmt.h"
 
-int show_cmd(void);
+int show_cmd(int argc, char *argv[]);

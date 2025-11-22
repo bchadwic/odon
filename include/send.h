@@ -2,8 +2,4 @@
 
 #include "odon.h"
 
-int send_cmd(struct sockaddr_in *src,
-             socklen_t src_len,
-             struct sockaddr_in *dst,
-             socklen_t dst_len,
-             char *filename);
+int send_cmd(int argc, char *argv[]);

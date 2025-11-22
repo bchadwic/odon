@@ -1,7 +1,10 @@
 #include "../include/show.h"
 
-int show_cmd(void)
+int show_cmd(int argc, char *argv[])
 {
+  (void)argc;
+  (void)argv;
+
   struct odon_addr_exch *exch = odon_exchaddrs_init();
   for (struct odon_addr_exch *curr = exch; curr != NULL; curr = curr->next)
   {

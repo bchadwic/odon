@@ -12,29 +12,8 @@ int send_cmd(int argc, char *argv[])
   }
 
   const char *filename = *argv;
-
-  uint8_t first = 1;
-  struct odon_addr_exch *exch = odon_exchaddrs_init();
-  for (struct odon_addr_exch *curr = exch; curr != NULL; curr = curr->next)
-  {
-    char encoded[MAX_EXCH_ENCODED_LENGTH];
-    fmt_conn_base64url_encode(curr->type, curr->conn_data, encoded);
-
-    if (first)
-    {
-      first = 0;
-      printf("%s", encoded);
-    }
-    else
-    {
-      printf(":%s", encoded);
-    }
-  }
-  odon_exchaddrs_free(exch);
-
   char peer[MAX_EXCH_ENCODED_LENGTH * 10];
-  printf("\n  \\__peer: ");
-  scanf("%s", peer);
+  prompt_peer(peer, sizeof(peer));
 
   printf("received peer info: %s\n", peer);
 

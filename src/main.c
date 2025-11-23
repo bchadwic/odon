@@ -2,7 +2,6 @@
 #include "../include/recv.h"
 #include "../include/show.h"
 #include "../include/errors.h"
-#include "../include/fmt.h"
 
 struct command
 {

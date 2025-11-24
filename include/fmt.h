@@ -17,3 +17,5 @@ void fmt_conn_base64url_decode(enum exch_type type,
 void fmt_conn_plaintext(enum exch_type type,
                         uint8_t conn_data[MAX_EXCH_DATA_LENGTH],
                         char plaintext[MAX_EXCH_PLAINTEXT_LENGTH]);
+
+int fmt_conn_splitnext(char **peer, char **start, size_t *len);

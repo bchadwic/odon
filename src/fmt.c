@@ -165,3 +165,32 @@ void fmt_conn_plaintext(enum exch_type type, uint8_t conn_data[MAX_EXCH_DATA_LEN
     // unknown type
     plaintext[0] = '\0';
 }
+
+int fmt_conn_splitnext(char **peer, char **start, size_t *len)
+{
+    const static char delim = ':';
+    if (**peer == '\0')
+    {
+        return 0;
+    }
+
+    char *p = *peer;
+    *start = p;
+
+    while (*p != '\0' && *p != delim)
+    {
+        p++;
+    }
+
+    *len = (size_t)(p - *start);
+
+    if (*p != '\0')
+    {
+        *peer = p + 1;
+    }
+    else
+    {
+        *peer = p;
+    }
+    return 1;
+}

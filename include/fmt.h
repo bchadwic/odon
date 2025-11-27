@@ -6,6 +6,8 @@
 #define MAX_EXCH_ENCODED_LENGTH 9
 #define MAX_EXCH_PLAINTEXT_LENGTH 22
 
+#define IPV4_BASE64_URL_LENGTH 6
+
 void fmt_conn_base64url_encode(enum exch_type type,
                                uint8_t conn_data[MAX_EXCH_DATA_LENGTH],
                                char encoded[MAX_EXCH_ENCODED_LENGTH]);

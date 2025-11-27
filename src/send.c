@@ -1,4 +1,5 @@
 #include "../include/send.h"
+#include <string.h>
 
 int send_cmd(int argc, char *argv[])
 {
@@ -6,7 +7,40 @@ int send_cmd(int argc, char *argv[])
   {
     return ERR_NO_POS_ARG;
   }
+  else if (argc > 1)
+  {
+    return ERR_TOO_MANY_ARGS;
+  }
+
   const char *filename = *argv;
+  char peer[MAX_EXCH_ENCODED_LENGTH * 10];
+  prompt_peer(peer, sizeof(peer));
+  /* strip trailing newline from fgets() */
+  char *nl = strchr(peer, '\n');
+  if (nl) {
+    *nl = '\0';
+  }
+  char *p = peer;
+  char *start;
+  size_t len;
+  if (!fmt_conn_splitnext(&p, &start, &len))
+  {
+    return ERR_INVALID_CMD;
+  }
+
+  if (len != IPV4_BASE64_URL_LENGTH)
+  {
+    return ERR_INVALID_EXCH_STR;
+  }
+
+  enum exch_type type = IPV4_LOCAL_AREA;
+  uint8_t conn_data[MAX_EXCH_DATA_LENGTH];
+  fmt_conn_base64url_decode(type, start, conn_data);
+
+  char plaintext[MAX_EXCH_PLAINTEXT_LENGTH];
+  fmt_conn_plaintext(type, conn_data, plaintext);
+
+  printf("peer ip: %s\n", plaintext);
 
   struct sockaddr_in src = {
       .sin_family = AF_INET,

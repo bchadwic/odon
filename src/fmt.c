@@ -168,7 +168,7 @@ void fmt_conn_plaintext(enum exch_type type, uint8_t conn_data[MAX_EXCH_DATA_LEN
 
 int fmt_conn_splitnext(char **peer, char **start, size_t *len)
 {
-    const static char delim = ':';
+    static const char delim = ':';
     if (**peer == '\0')
     {
         return 0;

@@ -20,4 +20,6 @@ void fmt_conn_plaintext(enum exch_type type,
                         uint8_t conn_data[MAX_EXCH_DATA_LENGTH],
                         char plaintext[MAX_EXCH_PLAINTEXT_LENGTH]);
 
+uint32_t fmt_conn_uint32(uint8_t conn_data[MAX_EXCH_DATA_LENGTH]);
+
 int fmt_conn_splitnext(char **peer, char **start, size_t *len);

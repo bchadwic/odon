@@ -166,6 +166,15 @@ void fmt_conn_plaintext(enum exch_type type, uint8_t conn_data[MAX_EXCH_DATA_LEN
     plaintext[0] = '\0';
 }
 
+uint32_t fmt_conn_uint32(uint8_t conn_data[MAX_EXCH_DATA_LENGTH])
+{
+    printf("hello world\n");
+    return ((uint32_t)conn_data[0]) |
+           ((uint32_t)conn_data[1] << 8) |
+           ((uint32_t)conn_data[2] << 16) |
+           ((uint32_t)conn_data[3] << 24);
+}
+
 int fmt_conn_splitnext(char **peer, char **start, size_t *len)
 {
     static const char delim = ':';

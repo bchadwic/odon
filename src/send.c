@@ -15,14 +15,11 @@ int send_cmd(int argc, char *argv[])
   const char *filename = *argv;
   char peer[MAX_EXCH_ENCODED_LENGTH * 10];
   prompt_peer(peer, sizeof(peer));
-  /* strip trailing newline from fgets() */
-  char *nl = strchr(peer, '\n');
-  if (nl) {
-    *nl = '\0';
-  }
+
   char *p = peer;
   char *start;
   size_t len;
+
   if (!fmt_conn_splitnext(&p, &start, &len))
   {
     return ERR_INVALID_CMD;
@@ -41,6 +38,7 @@ int send_cmd(int argc, char *argv[])
   fmt_conn_plaintext(type, conn_data, plaintext);
 
   printf("peer ip: %s\n", plaintext);
+  printf("raw: %d\n", fmt_conn_uint32(conn_data));
 
   struct sockaddr_in src = {
       .sin_family = AF_INET,

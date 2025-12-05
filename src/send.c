@@ -38,11 +38,11 @@ int send_cmd(int argc, char *argv[])
   fmt_conn_plaintext(type, conn_data, plaintext);
 
   printf("peer ip: %s\n", plaintext);
-  printf("raw: %d\n", fmt_conn_uint32(conn_data));
 
+  uint32_t src_addr = fmt_conn_ipv4(conn_data);
   struct sockaddr_in src = {
       .sin_family = AF_INET,
-      .sin_addr.s_addr = htonl(INADDR_LOOPBACK),
+      .sin_addr.s_addr = htonl(src_addr),
       .sin_port = htons(52888),
   };
 

@@ -2,9 +2,9 @@
 
 int odon_perror(const char *bin, int err)
 {
-  if (err > 0)
+  if (err > ERR_ODON_UPPER_BOUND)
   {
-    return fprintf(stderr, "%s: unknown error occurred\n%s\n", bin, strerror(err));
+    return fprintf(stderr, "%s: %s\n", bin, strerror(errno));
   }
 
   switch (err)
@@ -22,5 +22,4 @@ int odon_perror(const char *bin, int err)
   default:
     return fprintf(stderr, "%s: unknown error code: %d\n", bin, err);
   }
-  return 0;
 }

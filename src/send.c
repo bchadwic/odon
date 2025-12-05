@@ -34,12 +34,8 @@ static int run(FILE *input)
   char *start;
   size_t len;
 
-  if (!fmt_conn_splitnext(&p, &start, &len))
-  {
-    return ERR_INVALID_CMD;
-  }
-
-  if (len != IPV4_BASE64_URL_LENGTH)
+  // currently only parsing one section
+  if (!fmt_conn_splitnext(&p, &start, &len) || len != IPV4_BASE64_URL_LENGTH)
   {
     return ERR_INVALID_EXCH_STR;
   }

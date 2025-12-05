@@ -42,6 +42,11 @@ extern int odon_send(struct odon_conn *conn, FILE *input)
     }
   }
 
+  // termination
+  if (odon_send_packet(conn, 0, 0) < 0)
+  {
+    return -1;
+  }
   return 0;
 }
 
@@ -58,7 +63,7 @@ static int odon_send_packet(struct odon_conn *conn, char *buf, size_t len)
     setsockopt(conn->socket, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
 
     char ack[1];
-    if (recv(conn->socket, ack, 1, 0) >= 0)
+    if (recv(conn->socket, ack, 1, 0) >= 0 && ack[0] == 1)
     {
       break;
     }
@@ -77,10 +82,13 @@ extern int odon_recv(struct odon_conn *conn, FILE *output)
 {
   while (1)
   {
+    printf("receiving packet\n");
     char buf[PACKET_SIZE];
     ssize_t read_len = recv(conn->socket, buf, PACKET_SIZE, 0);
     if (read_len <= 0)
     {
+      uint8_t ack[1] = {1};
+      send(conn->socket, ack, 1, 0);
       break;
     }
 
@@ -90,8 +98,8 @@ extern int odon_recv(struct odon_conn *conn, FILE *output)
       return -1;
     }
 
-    uint8_t ack[1];
-    if (write(conn->socket, ack, 1) < 0)
+    uint8_t ack[1] = {1};
+    if (send(conn->socket, ack, 1, 0) < 0)
     {
       return -1;
     }

@@ -1,6 +1,3 @@
-# settings
-.vscode/**
-
 # compile files
 odon
 **.o

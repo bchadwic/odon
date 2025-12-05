@@ -166,6 +166,14 @@ void fmt_conn_plaintext(enum exch_type type, uint8_t conn_data[MAX_EXCH_DATA_LEN
     plaintext[0] = '\0';
 }
 
+uint32_t fmt_conn_ipv4(uint8_t conn_data[MAX_EXCH_DATA_LENGTH])
+{
+    return ((uint32_t)conn_data[0] << 24) |
+           ((uint32_t)conn_data[1] << 16) |
+           ((uint32_t)conn_data[2] << 8) |
+           ((uint32_t)conn_data[3]);
+}
+
 int fmt_conn_splitnext(char **peer, char **start, size_t *len)
 {
     static const char delim = ':';

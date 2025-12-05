@@ -23,4 +23,10 @@ void prompt_peer(char peer[], size_t n)
 
   printf("\n  \\__peer: ");
   fgets(peer, (int)n, stdin);
+
+  // strip newline char
+  char *nl = strchr(peer, '\n');
+  if (nl) {
+    *nl = '\0';
+  }
 }

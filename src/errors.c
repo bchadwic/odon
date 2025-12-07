@@ -19,6 +19,8 @@ int odon_perror(const char *bin, int err)
     return fprintf(stderr, "%s: too many arguments\n", bin);
   case ERR_INVALID_EXCH_STR:
     return fprintf(stderr, "%s: invalid exchange connection string\n", bin);
+  case ERR_INVALID_SRC_ADDR:
+    return fprintf(stderr, "%s: invalid source address, check network interface\n", bin);
   default:
     return fprintf(stderr, "%s: unknown error code: %d\n", bin, err);
   }

@@ -1,4 +1,5 @@
 #include "../include/exch.h"
+#include "../include/fmt.h"
 
 struct odon_addr_exch *odon_exchaddrs_init(void)
 {
@@ -51,4 +52,52 @@ extern void odon_exchaddrs_free(struct odon_addr_exch *exch)
     exch = next;
   }
   return;
+}
+
+extern uint32_t odon_exch_srcaddr(void)
+{
+  uint32_t src_addr = 0;
+
+  struct odon_addr_exch *exch = odon_exchaddrs_init();
+  for (struct odon_addr_exch *curr = exch; curr != NULL; curr = curr->next)
+  {
+    char encoded[MAX_EXCH_ENCODED_LENGTH];
+    fmt_conn_base64url_encode(curr->type, curr->conn_data, encoded);
+    printf("%s", encoded);
+
+    src_addr = fmt_conn_ipv4(curr->conn_data);
+  }
+  odon_exchaddrs_free(exch);
+
+  return src_addr;
+}
+
+extern uint32_t odon_exch_dstaddr(void)
+{
+  char peer[MAX_EXCH_ENCODED_LENGTH * 10];
+  printf("\n  \\__peer: ");
+  fgets(peer, (int)MAX_EXCH_ENCODED_LENGTH * 10, stdin);
+
+  // strip newline char
+  char *nl = strchr(peer, '\n');
+  if (nl)
+  {
+    *nl = '\0';
+  }
+
+  char *p = peer;
+  char *start;
+  size_t len;
+
+  // currently only parsing one section
+  if (!fmt_conn_splitnext(&p, &start, &len) || len != IPV4_BASE64_URL_LENGTH)
+  {
+    return 0;
+  }
+
+  enum exch_type type = IPV4_LOCAL_AREA;
+  uint8_t conn_data[MAX_EXCH_DATA_LENGTH];
+  fmt_conn_base64url_decode(type, start, conn_data);
+
+  return fmt_conn_ipv4(conn_data);
 }

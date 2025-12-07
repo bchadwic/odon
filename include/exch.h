@@ -29,3 +29,6 @@ struct odon_addr_exch
 extern struct odon_addr_exch *odon_exchaddrs_init(void);
 // should be called after using odon_addr_exch
 extern void odon_exchaddrs_free(struct odon_addr_exch *exch);
+
+extern uint32_t odon_exch_srcaddr(void);
+extern uint32_t odon_exch_dstaddr(void);

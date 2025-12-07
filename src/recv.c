@@ -27,22 +27,17 @@ int recv_cmd(int argc, char *argv[])
 
 int run(FILE *output)
 {
-  char peer[MAX_EXCH_ENCODED_LENGTH * 10];
-  prompt_peer(peer, sizeof(peer));
+  uint32_t src_addr = odon_exch_srcaddr();
+  if (src_addr == 0)
+  {
+    return ERR_INVALID_SRC_ADDR;
+  }
 
-  char *p = peer;
-  char *start;
-  size_t len;
-
-  // currently only parsing one section
-  if (!fmt_conn_splitnext(&p, &start, &len) || len != IPV4_BASE64_URL_LENGTH)
+  uint32_t dst_addr = odon_exch_dstaddr();
+  if (dst_addr == 0)
   {
     return ERR_INVALID_EXCH_STR;
   }
-
-  enum exch_type type = IPV4_LOCAL_AREA;
-  uint8_t conn_data[MAX_EXCH_DATA_LENGTH];
-  fmt_conn_base64url_decode(type, start, conn_data);
 
   struct sockaddr_in src = {
       .sin_family = AF_INET,
@@ -50,7 +45,6 @@ int run(FILE *output)
       .sin_port = htons(52887),
   };
 
-  uint32_t dst_addr = fmt_conn_ipv4(conn_data);
   struct sockaddr_in dst = {
       .sin_family = AF_INET,
       .sin_addr.s_addr = htonl(dst_addr),

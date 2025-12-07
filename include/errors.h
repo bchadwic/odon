@@ -12,6 +12,7 @@ enum odon_error
   ERR_NO_POS_ARG,
   ERR_TOO_MANY_ARGS,
   ERR_INVALID_EXCH_STR,
+  ERR_INVALID_SRC_ADDR,
   // always at the bottom
   ERR_ODON_UPPER_BOUND,
 };
